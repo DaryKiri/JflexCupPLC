@@ -1,0 +1,61 @@
+/* import the cup package */
+import java_cup.runtime.*;
+
+import plUtils.*;
+
+/* user code, action code declarations 
+action code {: 
+	public static int TMP = 0;
+:};
+*/
+
+/* symbols */
+terminal String NUMERO, IDENT;
+terminal IGUAL, MAS, MENOS, UMENOS, POR, DIV, AP, CP, PYC, PRINT;
+terminal APA, CPA; /* open parenthesis and close parenthesis */
+
+non terminal String list_sent, sentencia, expresion;
+non terminal s;
+
+/* precedences */
+precedence 		left	MAS, MENOS;
+precedence 		left	DIV, POR;
+precedence 		left	UMENOS;
+precedence 		left	AP;
+
+/* grammar */
+s ::= list_sent;
+
+list_sent ::= sentencia list_sent
+			  |
+			  sentencia {: System.out.println("Fin sentencia unica"); :}
+			  |
+			  APA list_sent CPA {: System.out.println("una sola sentencia en un parentesis"); :}
+			  ;
+
+sentencia ::= expresion:e PYC {: RESULT = e; :}
+			 |
+			 PRINT AP expresion:e CP PYC {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :}
+			 ;
+
+expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
+			 |
+			 expresion:e1 MENOS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " - " + e2 + ";"); :}
+			 |
+			 expresion:e1 POR expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " * " + e2 + ";"); :}
+			 |
+			 expresion:e1 DIV expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + "= " + e1 + " / " + e2 + ";"); :}
+			 |
+			 MENOS expresion:e {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = -" + e + ";"); :}
+			 %prec UMENOS
+			 |
+			 AP expresion:e CP {: RESULT = e; :}
+			 |
+			 IDENT:i IGUAL expresion:e {: RESULT = i; System.out.println(i + "=" + e + ";" ); :}
+			 |
+			 IDENT:i {: RESULT = i; :} 
+			 |
+			 NUMERO:n {: RESULT = n; :}
+			 ;
+
+
