@@ -11,36 +11,86 @@ action code {:
 
 /* symbols */
 terminal String NUMERO, IDENT;
-terminal IGUAL, MAS, MENOS, UMENOS, POR, DIV, AP, CP, PYC, PRINT;
-terminal APA, CPA; /* open parenthesis and close parenthesis */
+terminal IGUAL, MAS, MENOS, UMENOS, POR, DIV, AP, CP, PYC;
+terminal PRINT, IF, ELSE;
+
+/* conditionals symbols */
+terminal EQUALS, MAYOR, MENOR, DISTINTO;
+
+/* open parenthesis and close parenthesis */
+terminal APA, CPA; 
+
+/* epsilon */
+
+/* comprobar si todos los no terminales precisan de tener un string como valor */
 
 non terminal String list_sent, sentencia, expresion, sentencia_simple, sentencia_comp;
+non terminal String sent_print, else_if, condicion;
+non terminal IfHolder sent_if; 
 non terminal s;
 
 /* precedences */
 precedence 		left	MAS, MENOS;
 precedence 		left	DIV, POR;
 precedence 		left	UMENOS;
-precedence 		left	AP;
+precedence 		left	AP, APA, ELSE, NUMERO, IDENT, PRINT, IF;
 
 /* grammar */
 s ::= list_sent;
 
-list_sent ::= list_sent sentencia {: System.out.println("Fin varias sentencias"); :}
+list_sent ::= sentencia list_sent
 			  |
-			  sentencia {: System.out.println("Fin sentencia unica"); :}
+			  sentencia
 			  ;
 
 sentencia ::= sentencia_simple 
 			  |
-			  sentencia_comp;
+			  sentencia_comp
+			  ;
 
-sentencia_comp ::= APA list_sent CPA {: System.out.println("una sola sentencia en un parentesis"); :}; 
+sentencia_comp ::= APA list_sent CPA;
 
 sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 			 		 |
-			 		 PRINT AP expresion:e CP PYC {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :}
+			 		 sent_print PYC
+			 		 |
+			 		 sent_if
 			 		 ;
+
+sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
+
+sent_if ::= IF AP condicion CP {:
+									RESULT = new IfHolder();
+									RESULT.setIfLabel(Utils.getCurrentLabelString());
+									Utils.incrementLabel();
+									RESULT.setElseLabel(Utils.getCurrentLabelString());
+									Utils.incrementLabel();
+									RESULT.setFinalLabel(Utils.getCurrentLabelString());
+									
+									System.out.println("goto " + RESULT.getIfLabel() + ";");
+									System.out.println("goto " + RESULT.getElseLabel() + ";");
+									System.out.println(RESULT.getIfLabel() + ":");
+								:} 
+								list_sent 
+								{:
+									System.out.println("goto " + RESULT.getFinalLabel() + ";");
+									System.out.println(RESULT.getElseLabel() + ":");
+								:} 
+								else_if {: System.out.println(RESULT.getFinalLabel() + ":"); :} 
+			;
+
+else_if ::=	ELSE list_sent
+			|
+			;
+
+condicion ::= expresion:e1 EQUALS expresion:e2 {: System.out.print("if (" + e1 + " == " + e2 + ") "); :}
+			  |
+			  expresion:e1 DISTINTO expresion:e2 {: System.out.print("if (" + e1 + " < " + e2 + ") "); :}
+			  |
+			  expresion:e1 MAYOR expresion:e2 {: System.out.print("if (" + e2 + " < " + e1 + ") "); :}
+			  |
+			  expresion:e1 MENOR expresion:e2 {: System.out.print("if (" + e1 + " < " + e2 + ") "); :}
+			  ;
 
 expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
 			 |

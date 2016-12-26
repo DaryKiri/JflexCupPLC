@@ -27,7 +27,7 @@ parser.java: $(PROGRAM).cup
 	$(CUP) $(PROGRAM).cup
 
 clean:
-	rm -f parser.java Yylex.java sym.java output.txt *.class plUtils/Utils.class *~
+	rm -f parser.java Yylex.java sym.java output.txt *.class plUtils/*.class *~
 
 run:
 	$(JAVA) -cp $(CP) $(PROGRAM) test.txt
@@ -40,3 +40,8 @@ testA: #TODO change to a for
 testB:
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/b0.pl
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/b1.pl
+
+testC:
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c0.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c1.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c2.pl
