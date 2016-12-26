@@ -73,7 +73,7 @@ sent_if ::= IF AP condicion CP {: // para la ampliacion de composicion con opera
 									System.out.println("goto " + RESULT.getElseLabel() + ";");
 									System.out.println(RESULT.getIfLabel() + ":");
 								:} 
-								list_sent 
+								sentencia 
 								{:
 									System.out.println("goto " + RESULT.getFinalLabel() + ";");
 									System.out.println(RESULT.getElseLabel() + ":");
@@ -81,7 +81,7 @@ sent_if ::= IF AP condicion CP {: // para la ampliacion de composicion con opera
 								else_if 
 			;
 
-else_if ::=	ELSE list_sent {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} // Imprimir Final label aqui
+else_if ::=	ELSE sentencia {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} // Imprimir Final label aqui
 			| {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} //pasar el objeto IfHolder aqui!!!
 			;
 
