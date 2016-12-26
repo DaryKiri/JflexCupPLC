@@ -59,13 +59,15 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
 
-sent_if ::= IF AP condicion CP {:
+sent_if ::= IF AP condicion CP {: // para la ampliacion de composicion con operadores logicos, cambiar este bloque a antes de condicion
 									RESULT = new IfHolder();
 									RESULT.setIfLabel(Utils.getCurrentLabelString());
 									Utils.incrementLabel();
 									RESULT.setElseLabel(Utils.getCurrentLabelString());
 									Utils.incrementLabel();
 									RESULT.setFinalLabel(Utils.getCurrentLabelString());
+									IfHolder.finalLabelStack.push(RESULT.getFinalLabel());
+									Utils.incrementLabel();
 									
 									System.out.println("goto " + RESULT.getIfLabel() + ";");
 									System.out.println("goto " + RESULT.getElseLabel() + ";");
@@ -76,11 +78,11 @@ sent_if ::= IF AP condicion CP {:
 									System.out.println("goto " + RESULT.getFinalLabel() + ";");
 									System.out.println(RESULT.getElseLabel() + ":");
 								:} 
-								else_if {: System.out.println(RESULT.getFinalLabel() + ":"); :} 
+								else_if 
 			;
 
-else_if ::=	ELSE list_sent
-			|
+else_if ::=	ELSE list_sent {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} // Imprimir Final label aqui
+			| {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} //pasar el objeto IfHolder aqui!!!
 			;
 
 condicion ::= expresion:e1 EQUALS expresion:e2 {: System.out.print("if (" + e1 + " == " + e2 + ") "); :}
