@@ -15,7 +15,7 @@ terminal IGUAL, MAS, MENOS, UMENOS, POR, DIV, AP, CP, PYC;
 terminal PRINT, IF, ELSE;
 
 /* conditionals symbols */
-terminal EQUALS, MAYOR, MENOR, DISTINTO;
+terminal EQUALS, MAYOR, MENOR, DISTINTO, MENORE, MAYORE;
 
 /* open parenthesis and close parenthesis */
 terminal APA, CPA; 
@@ -25,8 +25,8 @@ terminal APA, CPA;
 /* comprobar si todos los no terminales precisan de tener un string como valor */
 
 non terminal String list_sent, sentencia, expresion, sentencia_simple, sentencia_comp;
-non terminal String sent_print, else_if, condicion;
-non terminal IfHolder sent_if; 
+non terminal String sent_print, else_if, rel_op;
+non terminal IfHolder sent_if, condicion; 
 non terminal s;
 
 /* precedences */
@@ -59,39 +59,48 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
 
-sent_if ::= IF AP condicion CP {: // para la ampliacion de composicion con operadores logicos, cambiar este bloque a antes de condicion
-									RESULT = new IfHolder();
-									RESULT.setIfLabel(Utils.getCurrentLabelString());
-									Utils.incrementLabel();
-									RESULT.setElseLabel(Utils.getCurrentLabelString());
-									Utils.incrementLabel();
-									RESULT.setFinalLabel(Utils.getCurrentLabelString());
-									IfHolder.finalLabelStack.push(RESULT.getFinalLabel());
-									Utils.incrementLabel();
-									
-									System.out.println("goto " + RESULT.getIfLabel() + ";");
-									System.out.println("goto " + RESULT.getElseLabel() + ";");
-									System.out.println(RESULT.getIfLabel() + ":");
+sent_if ::= IF AP condicion:cond CP {: // para composicion con operadores logicos, cambiar este bloque a antes de condicion Inciflabel?
+									System.out.println(cond.getIfLabel() + ":");
 								:} 
 								sentencia 
 								{:
-									System.out.println("goto " + RESULT.getFinalLabel() + ";");
-									System.out.println(RESULT.getElseLabel() + ":");
+									System.out.println("goto " + cond.getFinalLabel() + ";");
+									System.out.println(cond.getElseLabel() + ":");
 								:} 
-								else_if 
+								else_if {: System.out.println(cond.getFinalLabel() + ":"); :} // Imprimir Final label aqui
 			;
 
-else_if ::=	ELSE sentencia {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} // Imprimir Final label aqui
-			| {: System.out.println(IfHolder.finalLabelStack.pop() + ":"); :} //pasar el objeto IfHolder aqui!!!
+else_if ::=	ELSE sentencia 
+			| 
 			;
 
-condicion ::= expresion:e1 EQUALS expresion:e2 {: System.out.print("if (" + e1 + " == " + e2 + ") "); :}
+// definir en Utils la variables de operacion logica y tener un metodo en utils para distinguir ifs
+rel_op ::= 	EQUALS {: RESULT = CondUtils.EQUALS; :}
+			|
+			DISTINTO {: RESULT = CondUtils.DISTINTO; :}
+			|
+			MAYOR {: RESULT = CondUtils.MAYOR; :}
+			|
+			MENOR {: RESULT = CondUtils.MENOR; :}
+			|
+			MENORE {: RESULT = CondUtils.MENORE; :}
+			|
+			MAYORE {: RESULT = CondUtils.MAYORE; :}
+			;
+
+// condicion tiene un objeto IfHolder para despues poder usarse en sent_if
+condicion ::= expresion:e1 rel_op:op expresion:e2 
+			{:	
+				CondUtils.printLogical(e1, op, e2); 
+				RESULT = new IfHolder();
+				RESULT.setIfLabel(Utils.getCurrentLabelString());
+				Utils.incrementLabel();
+				RESULT.setElseLabel(Utils.getCurrentLabelString());
+				Utils.incrementLabel();
+				RESULT.setFinalLabel(Utils.getCurrentLabelString());
+				Utils.incrementLabel();
+			:} 
 			  |
-			  expresion:e1 DISTINTO expresion:e2 {: System.out.print("if (" + e1 + " < " + e2 + ") "); :}
-			  |
-			  expresion:e1 MAYOR expresion:e2 {: System.out.print("if (" + e2 + " < " + e1 + ") "); :}
-			  |
-			  expresion:e1 MENOR expresion:e2 {: System.out.print("if (" + e1 + " < " + e2 + ") "); :}
 			  ;
 
 expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
