@@ -36,6 +36,7 @@ import java_cup.runtime.*;
 "&&"						{ return new Symbol(sym.AND); }
 "||"						{ return new Symbol(sym.OR); }
 "!"							{ return new Symbol(sym.NEGATION); }
+"while"						{ return new Symbol(sym.WHILE); }
 "if"						{ return new Symbol(sym.IF); }
 "else"						{ return new Symbol(sym.ELSE); }
 "print"    		            { return new Symbol(sym.PRINT); }

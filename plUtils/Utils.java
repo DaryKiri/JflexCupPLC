@@ -36,4 +36,17 @@ public class Utils {
 	public static void resetLabel(){
 		LABEL = 0;
 	}
+	
+	public static void printGoTo(String label){
+		System.out.println("goto " + label + ";");
+	}
+	
+	public static void printLabel(String label){
+		System.out.println(label + ":");
+	}
+	
+	//testing
+	public static void printIfGoTo(String exp1, String val_op, String exp2, String label){
+		
+	}
 }

@@ -23,12 +23,15 @@ terminal APA, CPA;
 /* logical operators */
 terminal AND, OR, NEGATION;
 
+/* flow control operators */
+terminal WHILE;
+
 /* epsilon */
 
 /* comprobar si todos los no terminales precisan de tener un string como valor */
 
 non terminal String list_sent, sentencia, expresion, sentencia_simple, sentencia_comp;
-non terminal String sent_print, else_if, rel_op;
+non terminal String sent_print, else_if, rel_op, sent_while;
 non terminal IfHolder sent_if, condicion; 
 non terminal s;
 
@@ -62,6 +65,8 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 			 		 sent_print PYC
 			 		 |
 			 		 sent_if
+			 		 |
+			 		 sent_while
 			 		 ;
 
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
@@ -136,6 +141,23 @@ condicion ::= expresion:e1 rel_op:op expresion:e2
 			  |
 			  AP condicion:c CP {: RESULT = c; :}
 			  ;
+
+sent_while ::= WHILE AP 
+				{: 
+					IterUtils.pushLabel(Utils.getCurrentLabelString()); 
+					IterUtils.printLabelTop();
+					Utils.incrementLabel(); 
+				:} 
+				condicion:cond CP
+				{: 
+					CondUtils.printLabels(cond.getIfLabels());
+				:} 
+				sentencia 
+				{:
+					IterUtils.printPopGoTo();
+					CondUtils.printLabels(cond.getElseLabels());
+				:}
+				;
 
 expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
 			 |

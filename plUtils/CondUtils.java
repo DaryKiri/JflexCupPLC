@@ -12,7 +12,6 @@ public class CondUtils {
 
 	public static void printLogical(String e1, String rel_op, String e2){
 		//System.out.print("if (" + e1 + " == " + e2 + ") "); 
-		// TODO: DEVOLVER BIEN LOS LABELS CREANDO UN OBJETO IfHolder??
 		switch(rel_op)
 		{
 		case EQUALS:
@@ -47,14 +46,14 @@ public class CondUtils {
 	// new
 	public static void printGoTo(List<String> labels){
 		for(String l : labels){
-			System.out.println("goto " + l + ";");
+			Utils.printGoTo(l);
 		}
 	}
 
 	// new
 	public static void printLabels(List<String> labels){
 		for(String l : labels){
-			System.out.println(l + ":");
+			Utils.printLabel(l);
 		}
 	}
 }

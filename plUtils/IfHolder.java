@@ -21,7 +21,6 @@ public class IfHolder {
 		return ifLabelList;
 	}
 	
-	// TODO: Puede haber un problema al meter la lista de labels, tener cuidado con eso si no se mete como una cola
 	public List<String> getElseLabels(){
 		return elseLabelList;
 	}
