@@ -45,3 +45,16 @@ testC:
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c0.pl
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c1.pl
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/c2.pl
+
+testD:
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d0.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d1.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d2.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d3.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d4.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d5.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d6.pl
+
+customTest:
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/d6.pl
+

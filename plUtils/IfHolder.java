@@ -1,57 +1,56 @@
 package plUtils;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Stack;
 
 public class IfHolder {
-	private String ifLabel;
-	private String elseLabel;
-	private String finalLabel;
-	public static Stack<String> finalLabelStack;
-
+	private List<String> ifLabelList;
+	private List<String> elseLabelList;
+	private List<String> finalLabelList;
+	
 	public IfHolder(){
-		ifLabel = null;
-		elseLabel = null;
-		finalLabel = null;
-		if(finalLabelStack == null){
-			finalLabelStack = new Stack<>();
-		}
+		// new
+		ifLabelList = new ArrayList<>();
+		elseLabelList = new ArrayList<>();
+		finalLabelList = new ArrayList<>();
 	}
 	
-	public IfHolder(String ifLabel, String elseLabel, String finalLabel){
-		this.ifLabel = ifLabel;
-		this.elseLabel = elseLabel;
-		this.finalLabel = finalLabel;
-		if(finalLabelStack == null){
-			finalLabelStack = new Stack<>();
-		}
-	}
-
-	public String getIfLabel() {
-		return ifLabel;
-	}
-
-	public void setIfLabel(String ifLabel) {
-		this.ifLabel = ifLabel;
-	}
-
-	public String getElseLabel() {
-		if(elseLabel == null){
-			return "";
-		}else{
-			return elseLabel;
-		}
-	}
-
-	public void setElseLabel(String elseLabel) {
-		this.elseLabel = elseLabel;
+	//new 
+	public List<String> getIfLabels(){
+		return ifLabelList;
 	}
 	
+	// TODO: Puede haber un problema al meter la lista de labels, tener cuidado con eso si no se mete como una cola
+	public List<String> getElseLabels(){
+		return elseLabelList;
+	}
 	
-	public String getFinalLabel() {
-		return finalLabel;
+	public List<String> getFinalLabels(){
+		return finalLabelList;
 	}
 
-	public void setFinalLabel(String finalLabel) {
-		this.finalLabel = finalLabel;
+	public void addIfLabel(String ifLabel) {
+		ifLabelList.add(ifLabel);
+	}
+	
+	public void addIfLabel(List<String> ifLabels){
+		ifLabelList.addAll(ifLabels);
+	}
+	
+	public void addElseLabel(String elseLabel){
+		elseLabelList.add(elseLabel);
+	}
+
+	public void addElseLabel(List<String> elseLabels){
+		elseLabelList.addAll(elseLabels);
+	}
+	
+	public void addFinalLabel(String finalLabel){
+		finalLabelList.add(finalLabel);
+	}
+	
+	public void addFinalLabel(List<String> finalLabels){
+		finalLabelList.addAll(finalLabels);
 	}
 }

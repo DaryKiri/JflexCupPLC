@@ -20,6 +20,9 @@ terminal EQUALS, MAYOR, MENOR, DISTINTO, MENORE, MAYORE;
 /* open parenthesis and close parenthesis */
 terminal APA, CPA; 
 
+/* logical operators */
+terminal AND, OR, NEGATION;
+
 /* epsilon */
 
 /* comprobar si todos los no terminales precisan de tener un string como valor */
@@ -30,9 +33,13 @@ non terminal IfHolder sent_if, condicion;
 non terminal s;
 
 /* precedences */
+precedence 		left	OR;
+precedence 		left	AND;
+precedence 		left	EQUALS, DISTINTO;
+precedence 		left	MAYOR, MENOR, MAYORE, MENORE;
 precedence 		left	MAS, MENOS;
 precedence 		left	DIV, POR;
-precedence 		left	UMENOS;
+precedence 		left	UMENOS, NEGATION;
 precedence 		left	AP, APA, ELSE, NUMERO, IDENT, PRINT, IF;
 
 /* grammar */
@@ -60,14 +67,14 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
 
 sent_if ::= IF AP condicion:cond CP {: // para composicion con operadores logicos, cambiar este bloque a antes de condicion Inciflabel?
-									System.out.println(cond.getIfLabel() + ":");
+									CondUtils.printLabels(cond.getIfLabels()); // Ln:
 								:} 
 								sentencia 
 								{:
-									System.out.println("goto " + cond.getFinalLabel() + ";");
-									System.out.println(cond.getElseLabel() + ":");
+									CondUtils.printGoTo(cond.getFinalLabels()); // goto Ln;
+									CondUtils.printLabels(cond.getElseLabels()); // Ln:
 								:} 
-								else_if {: System.out.println(cond.getFinalLabel() + ":"); :} // Imprimir Final label aqui
+								else_if {: CondUtils.printLabels(cond.getFinalLabels()); :} // Ln:
 			;
 
 else_if ::=	ELSE sentencia 
@@ -91,16 +98,43 @@ rel_op ::= 	EQUALS {: RESULT = CondUtils.EQUALS; :}
 // condicion tiene un objeto IfHolder para despues poder usarse en sent_if
 condicion ::= expresion:e1 rel_op:op expresion:e2 
 			{:	
-				CondUtils.printLogical(e1, op, e2); 
+				CondUtils.printLogical(e1, op, e2); // Metodo para imprimir el if 
 				RESULT = new IfHolder();
-				RESULT.setIfLabel(Utils.getCurrentLabelString());
+				RESULT.addIfLabel(Utils.getCurrentLabelString());
 				Utils.incrementLabel();
-				RESULT.setElseLabel(Utils.getCurrentLabelString());
+				RESULT.addElseLabel(Utils.getCurrentLabelString());
 				Utils.incrementLabel();
-				RESULT.setFinalLabel(Utils.getCurrentLabelString());
+				RESULT.addFinalLabel(Utils.getCurrentLabelString());
 				Utils.incrementLabel();
 			:} 
 			  |
+			  condicion:c1 AND {: CondUtils.printLabels(c1.getIfLabels()); :} condicion:c2 
+			  {: 
+			  	RESULT = new IfHolder();
+			  	RESULT.addIfLabel(c2.getIfLabels());
+			  	RESULT.addElseLabel(c1.getElseLabels());
+			  	RESULT.addElseLabel(c2.getElseLabels());
+			  	RESULT.addFinalLabel(c1.getFinalLabels()); 
+			  :}
+			  |
+			  condicion:c1 OR {: CondUtils.printLabels(c1.getElseLabels()); :} condicion:c2
+			  {:
+			  	RESULT = new IfHolder();
+			  	RESULT.addIfLabel(c1.getIfLabels());
+			  	RESULT.addIfLabel(c2.getIfLabels());
+			  	RESULT.addElseLabel(c2.getElseLabels());
+			  	RESULT.addFinalLabel(c1.getFinalLabels()); 
+			  :}
+			  |
+			  NEGATION condicion:c 
+			  {:  
+			  	RESULT = new IfHolder();
+			  	RESULT.addIfLabel(c.getElseLabels());
+			  	RESULT.addElseLabel(c.getIfLabels());
+			  	RESULT.addFinalLabel(c.getFinalLabels());
+			  :}
+			  |
+			  AP condicion:c CP {: RESULT = c; :}
 			  ;
 
 expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
