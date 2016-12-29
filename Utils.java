@@ -1,16 +1,38 @@
-package plUtils;
+
+
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintStream;
 
 public class Utils {
 	// TODO: crear un metodo print para utils y poder printear o en fichero
 	private static int TMP = 0;
 	private static int LABEL = 0;
+	public static PrintStream out;
+	
+	public static void setOutput(){
+		out = System.out;
+	}
+	
+	public static void setOutput(String file){
+		try {
+			out = new PrintStream(new FileOutputStream(file));
+		} catch (FileNotFoundException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
 	
 	public static String getTmp(){
-		return Integer.toString(TMP++);
+		return "$t" + Integer.toString(TMP++);
 	}
 	
 	public static void resetTmp(){
 		TMP = 0;
+	}
+	
+	public static void decrementLabel(){
+		--LABEL;
 	}
 	
 	public static int getCurrentLabel(){
@@ -38,15 +60,14 @@ public class Utils {
 	}
 	
 	public static void printGoTo(String label){
-		System.out.println("goto " + label + ";");
+		Outprint("goto " + label + ";");
 	}
 	
 	public static void printLabel(String label){
-		System.out.println(label + ":");
+		out.println(label + ":");
 	}
 	
-	//testing
-	public static void printIfGoTo(String exp1, String val_op, String exp2, String label){
-		
+	public static void Outprint(String sentence){
+		out.println("\t" + sentence);
 	}
 }

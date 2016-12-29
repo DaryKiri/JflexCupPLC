@@ -11,4 +11,5 @@ This code compiles from a custom languaje named pl to a Three-address code
 - [X] g) do while sentences
 - [X] h) for sentences
 - [X] i) support for all sentences
-- [ ] j) optional redirect output to a file
+- [X] j) optional redirect output to a file
+- [ ] k) refactor and document

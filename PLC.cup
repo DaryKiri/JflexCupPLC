@@ -1,8 +1,6 @@
 /* import the cup package */
 import java_cup.runtime.*;
 
-import plUtils.*;
-
 /* user code, action code declarations 
 action code {: 
 	public static int TMP = 0;
@@ -71,9 +69,10 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 			 		 sent_for
 			 		 ;
 
-sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
+sent_print ::= PRINT AP expresion:e CP {: RESULT = e; Utils.Outprint("print " + e + ";"); Utils.resetTmp(); :};
 
-sent_if ::= IF AP condicion:cond CP {: // para composicion con operadores logicos, cambiar este bloque a antes de condicion Inciflabel?
+sent_if ::= IF AP condicion:cond CP 
+								{:	// para composicion con operadores logicos, cambiar este bloque a antes de condicion Inciflabel?
 									CondUtils.printLabels(cond.getIfLabels()); // Ln:
 								:} 
 								sentencia 
@@ -81,7 +80,10 @@ sent_if ::= IF AP condicion:cond CP {: // para composicion con operadores logico
 									CondUtils.printGoTo(cond.getFinalLabels()); // goto Ln;
 									CondUtils.printLabels(cond.getElseLabels()); // Ln:
 								:} 
-								else_if {: CondUtils.printLabels(cond.getFinalLabels()); :} // Ln:
+								else_if 
+								{: 
+									CondUtils.printLabels(cond.getFinalLabels()); 
+								:} // Ln:
 			;
 
 else_if ::=	ELSE sentencia 
@@ -115,22 +117,22 @@ condicion ::= expresion:e1 rel_op:op expresion:e2
 				Utils.incrementLabel();
 			:} 
 			  |
-			  condicion:c1 AND {: CondUtils.printLabels(c1.getIfLabels()); :} condicion:c2 
+			  condicion:c1 AND {: CondUtils.printLabels(c1.getIfLabels()); Utils.decrementLabel(); //new :} condicion:c2 
 			  {: 
 			  	RESULT = new IfHolder();
 			  	RESULT.addIfLabel(c2.getIfLabels());
 			  	RESULT.addElseLabel(c1.getElseLabels());
 			  	RESULT.addElseLabel(c2.getElseLabels());
-			  	RESULT.addFinalLabel(c1.getFinalLabels()); 
+			  	RESULT.addFinalLabel(c2.getFinalLabels()); //new 
 			  :}
 			  |
-			  condicion:c1 OR {: CondUtils.printLabels(c1.getElseLabels()); :} condicion:c2
+			  condicion:c1 OR {: CondUtils.printLabels(c1.getElseLabels()); Utils.decrementLabel(); //new :} condicion:c2
 			  {:
 			  	RESULT = new IfHolder();
 			  	RESULT.addIfLabel(c1.getIfLabels());
 			  	RESULT.addIfLabel(c2.getIfLabels());
 			  	RESULT.addElseLabel(c2.getElseLabels());
-			  	RESULT.addFinalLabel(c1.getFinalLabels()); 
+			  	RESULT.addFinalLabel(c2.getFinalLabels()); 
 			  :}
 			  |
 			  NEGATION condicion:c 
@@ -201,20 +203,20 @@ sent_for ::= FOR AP expresion:e1 PYC
 			:}
 			;
 
-expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
+expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = Utils.getTmp(); Utils.Outprint(RESULT + " = " + e1 + " + " + e2 + ";"); :}
 			 |
-			 expresion:e1 MENOS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " - " + e2 + ";"); :}
+			 expresion:e1 MENOS expresion:e2 {: RESULT = Utils.getTmp(); Utils.Outprint(RESULT + " = " + e1 + " - " + e2 + ";"); :}
 			 |
-			 expresion:e1 POR expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " * " + e2 + ";"); :}
+			 expresion:e1 POR expresion:e2 {: RESULT = Utils.getTmp(); Utils.Outprint(RESULT + " = " + e1 + " * " + e2 + ";"); :}
 			 |
-			 expresion:e1 DIV expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + "= " + e1 + " / " + e2 + ";"); :}
+			 expresion:e1 DIV expresion:e2 {: RESULT = Utils.getTmp(); Utils.Outprint(RESULT + "= " + e1 + " / " + e2 + ";"); :}
 			 |
-			 MENOS expresion:e {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = -" + e + ";"); :}
+			 MENOS expresion:e {: RESULT = Utils.getTmp(); Utils.Outprint(RESULT + " = -" + e + ";"); :}
 			 %prec UMENOS
 			 |
 			 AP expresion:e CP {: RESULT = e; :}
 			 |
-			 IDENT:i IGUAL expresion:e {: RESULT = i; System.out.println(i + "=" + e + ";" ); :}
+			 IDENT:i IGUAL expresion:e {: RESULT = i; Utils.Outprint(i + "=" + e + ";" ); :}
 			 |
 			 IDENT:i {: RESULT = i; :} 
 			 |

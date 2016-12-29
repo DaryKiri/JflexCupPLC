@@ -12,7 +12,7 @@ import java_cup.runtime.*;
 %line
 %column
 
-/* macros for the use in lexical rules */
+/* macros for use in lexical rules */
 
 %%      
 /* lexical rules */
@@ -45,4 +45,4 @@ import java_cup.runtime.*;
 0|[1-9][0-9]*				{ return new Symbol(sym.NUMERO, yytext() ); }
 [a-zA-Z][a-zA-Z0-9]*		{ return new Symbol(sym.IDENT, yytext() ); }
 [ \f\r\n\t]					{  }
-[^]							{ System.err.println("Error on line: " + yyline + " column: " + yycolumn); System.exit(0);}   
+[^]							{ System.err.println("Syntax error on line: " + yyline + " column: " + yycolumn); System.exit(0);}   

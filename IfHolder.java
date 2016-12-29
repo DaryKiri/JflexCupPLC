@@ -1,4 +1,3 @@
-package plUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +13,6 @@ public class IfHolder {
 		ifLabelList = new ArrayList<>();
 		elseLabelList = new ArrayList<>();
 		finalLabelList = new ArrayList<>();
-		
 	}
 	
 	//new 
