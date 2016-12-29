@@ -38,6 +38,7 @@ import java_cup.runtime.*;
 "!"							{ return new Symbol(sym.NEGATION); }
 "while"						{ return new Symbol(sym.WHILE); }
 "do"						{ return new Symbol(sym.DO); }
+"for"						{ return new Symbol(sym.FOR); }
 "if"						{ return new Symbol(sym.IF); }
 "else"						{ return new Symbol(sym.ELSE); }
 "print"    		            { return new Symbol(sym.PRINT); }

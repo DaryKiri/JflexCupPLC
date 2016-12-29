@@ -24,14 +24,12 @@ terminal APA, CPA;
 terminal AND, OR, NEGATION;
 
 /* flow control operators */
-terminal WHILE, DO;
-
-/* epsilon */
+terminal WHILE, DO, FOR;
 
 /* comprobar si todos los no terminales precisan de tener un string como valor */
 
 non terminal String list_sent, sentencia, expresion, sentencia_simple, sentencia_comp;
-non terminal String sent_print, else_if, rel_op, sent_while, sent_do_while; /* Alomejor no tienen valor */
+non terminal String sent_print, else_if, rel_op, sent_while, sent_do_while, sent_for; /* Alomejor no tienen valor */
 non terminal IfHolder sent_if, condicion; 
 non terminal s;
 
@@ -69,6 +67,8 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 			 		 sent_while
 			 		 |
 			 		 sent_do_while
+			 		 |
+			 		 sent_for
 			 		 ;
 
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; System.out.println("print " + e + ";"); Utils.resetTmp(); :};
@@ -177,6 +177,29 @@ sent_do_while ::= DO
 					:} 
 					PYC
 					;
+
+sent_for ::= FOR AP expresion:e1 PYC 
+			{:
+				IterUtils.pushLabel(Utils.getCurrentLabelString());
+				IterUtils.printLabelTop();
+				Utils.incrementLabel();
+			:} 
+			condicion:cond PYC 
+			{:
+				IterUtils.pushForLabel(cond.getFinalLabels().remove(0)); // puede petar
+				IterUtils.printForLabelTop();
+			:} 
+			expresion:e2 CP 
+			{:
+				IterUtils.printPopGoTo();
+				CondUtils.printLabels(cond.getIfLabels());
+			:} 
+			sentencia
+			{:
+				IterUtils.printForPopGoTo();
+				CondUtils.printLabels(cond.getElseLabels());
+			:}
+			;
 
 expresion ::= expresion:e1 MAS expresion:e2 {: RESULT = "$t" + Utils.getTmp(); System.out.println(RESULT + " = " + e1 + " + " + e2 + ";"); :}
 			 |

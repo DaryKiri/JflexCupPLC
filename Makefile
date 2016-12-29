@@ -63,6 +63,14 @@ testG:
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/g1.pl
 	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/g2.pl	
 
+testH:
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/h0.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/h1.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/h2.pl
+
+testI:
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/i0.pl
+
 customTest:
-	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/g2.pl
+	$(JAVA) -cp $(CP) $(PROGRAM) $(TESTDIR)/i0.pl
 

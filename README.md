@@ -9,5 +9,6 @@ This code compiles from a custom languaje named pl to a Three-address code
 - [X] e) if-else sentences with optional else sentence
 - [X] f) while sentences
 - [X] g) do while sentences
-- [ ] h) for sentences
-- [ ] i) support for all sentences
+- [X] h) for sentences
+- [X] i) support for all sentences
+- [ ] j) optional redirect output to a file
