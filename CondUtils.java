@@ -43,14 +43,12 @@ public class CondUtils {
 		}
 	}
 
-	// new
 	public static void printGoTo(List<String> labels){
 		for(String l : labels){
 			Utils.printGoTo(l);
 		}
 	}
 
-	// new
 	public static void printLabels(List<String> labels){
 		for(String l : labels){
 			Utils.printLabel(l);

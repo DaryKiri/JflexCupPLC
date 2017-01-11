@@ -42,6 +42,11 @@ precedence 		left	UMENOS, NEGATION;
 precedence 		left	AP, APA, ELSE, NUMERO, IDENT, PRINT, IF;
 
 /* grammar */
+
+/* To start with a concrete production
+start with s;
+*/
+
 s ::= list_sent;
 
 list_sent ::= sentencia list_sent
@@ -72,7 +77,7 @@ sentencia_simple ::= expresion:e PYC {: RESULT = e; Utils.resetTmp(); :}
 sent_print ::= PRINT AP expresion:e CP {: RESULT = e; Utils.Outprint("print " + e + ";"); Utils.resetTmp(); :};
 
 sent_if ::= IF AP condicion:cond CP 
-								{:	// para composicion con operadores logicos, cambiar este bloque a antes de condicion Inciflabel?
+								{:	
 									CondUtils.printLabels(cond.getIfLabels()); // Ln:
 								:} 
 								sentencia 
@@ -90,7 +95,6 @@ else_if ::=	ELSE sentencia
 			| 
 			;
 
-// definir en Utils la variables de operacion logica y tener un metodo en utils para distinguir ifs
 rel_op ::= 	EQUALS {: RESULT = CondUtils.EQUALS; :}
 			|
 			DISTINTO {: RESULT = CondUtils.DISTINTO; :}
@@ -117,7 +121,7 @@ condicion ::= expresion:e1 rel_op:op expresion:e2
 				Utils.incrementLabel();
 			:} 
 			  |
-			  condicion:c1 AND {: CondUtils.printLabels(c1.getIfLabels()); Utils.decrementLabel(); //new :} condicion:c2 
+			  condicion:c1 AND {: CondUtils.printLabels(c1.getIfLabels()); Utils.decrementLabel(); :} condicion:c2 
 			  {: 
 			  	RESULT = new IfHolder();
 			  	RESULT.addIfLabel(c2.getIfLabels());
@@ -126,7 +130,7 @@ condicion ::= expresion:e1 rel_op:op expresion:e2
 			  	RESULT.addFinalLabel(c2.getFinalLabels()); //new 
 			  :}
 			  |
-			  condicion:c1 OR {: CondUtils.printLabels(c1.getElseLabels()); Utils.decrementLabel(); //new :} condicion:c2
+			  condicion:c1 OR {: CondUtils.printLabels(c1.getElseLabels()); Utils.decrementLabel(); :} condicion:c2
 			  {:
 			  	RESULT = new IfHolder();
 			  	RESULT.addIfLabel(c1.getIfLabels());
@@ -188,7 +192,7 @@ sent_for ::= FOR AP expresion:e1 PYC
 			:} 
 			condicion:cond PYC 
 			{:
-				IterUtils.pushForLabel(cond.getFinalLabels().remove(0)); // puede petar
+				IterUtils.pushForLabel(cond.getFinalLabels().remove(0)); 
 				IterUtils.printForLabelTop();
 			:} 
 			expresion:e2 CP 

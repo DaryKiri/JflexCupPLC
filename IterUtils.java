@@ -32,10 +32,10 @@ public class IterUtils {
 	}
 	
 	public static void printPopGoTo(){
-		Utils.printGoTo(labelStack.pop()); // puede petar
+		Utils.printGoTo(labelStack.pop());
 	}
 	
 	public static void printForPopGoTo(){
-		Utils.printGoTo(forLabelStack.pop()); // puede petar
+		Utils.printGoTo(forLabelStack.pop()); 
 	}
 }

@@ -9,13 +9,11 @@ public class IfHolder {
 	private List<String> finalLabelList;
 	
 	public IfHolder(){
-		// new
 		ifLabelList = new ArrayList<>();
 		elseLabelList = new ArrayList<>();
 		finalLabelList = new ArrayList<>();
 	}
 	
-	//new 
 	public List<String> getIfLabels(){
 		return ifLabelList;
 	}

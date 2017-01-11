@@ -5,7 +5,6 @@ import java.io.FileOutputStream;
 import java.io.PrintStream;
 
 public class Utils {
-	// TODO: crear un metodo print para utils y poder printear o en fichero
 	private static int TMP = 0;
 	private static int LABEL = 0;
 	public static PrintStream out;
@@ -18,7 +17,6 @@ public class Utils {
 		try {
 			out = new PrintStream(new FileOutputStream(file));
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
